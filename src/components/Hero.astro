@@ -136,6 +136,8 @@ const portraits = ['/pics/4tuR0oZzN2U.jpeg', '/pics/Fd7y6vLyjpU.jpeg', '/pics/Do
     if (!imgs.length || !frame) return;
 
     const FX = ['fx-normal', 'fx-bw', 'fx-noir', 'fx-vintage', 'fx-warm', 'fx-faded'];
+    // B&W / vintage family — guaranteed to land at least once every 4 turns
+    const BW_VINTAGE = ['fx-bw', 'fx-noir', 'fx-vintage'];
     const GLOWS = ['', 'glow-blue', 'glow-green', 'glow-magenta', 'glow-cyan'];
     const pick = (a) => a[(Math.random() * a.length) | 0];
     const shuffle = (a) => {
@@ -146,7 +148,9 @@ const portraits = ['/pics/4tuR0oZzN2U.jpeg', '/pics/Fd7y6vLyjpU.jpeg', '/pics/Do
       }
       return a;
     };
-    const setFx = (img) => { FX.forEach((c) => img.classList.remove(c)); img.classList.add(pick(FX)); };
+    let turn = (Math.random() * 4) | 0; // random phase so the guaranteed turn varies per load
+    const chooseFx = () => (turn % 4 === 0 ? pick(BW_VINTAGE) : pick(FX));
+    const setFx = (img) => { FX.forEach((c) => img.classList.remove(c)); img.classList.add(chooseFx()); turn++; };
     const setGlow = () => { GLOWS.forEach((g) => g && frame.classList.remove(g)); const g = pick(GLOWS); if (g) frame.classList.add(g); };
 
     // start from whichever image is already active; give it a random look
