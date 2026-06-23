@@ -177,37 +177,50 @@ html[data-theme="programmer"] .theme-only-programmer { display: inline; }
    and Astro's scoped component styles (higher specificity).
    ============================================================ */
 
-/* ---------------- CORPORATE: light, calm, recruiter-friendly ---------------- */
+/* ---------------- CORPORATE: premium editorial (Stripe / Linear / McKinsey) ---------------- */
 html[data-theme="corporate"] {
   --color-bg: #ffffff;
-  --color-bg-panel: #f5f8fb;
-  --color-bg-raised: #eef3f8;
+  --color-bg-panel: #f7f9fc;
+  --color-bg-raised: #eef3f9;
 
-  --color-fg: #0d1b2a;
-  --color-body: #38495b;
-  --color-muted: #64748b;
+  --color-fg: #07223a;       /* soft navy for headings/strong */
+  --color-body: #41505f;
+  --color-muted: #6b7a89;
 
-  --color-accent: #1d4ed8;
-  --color-accent-bright: #2563eb;
-  --color-accent-sky: #2563eb;
-  --color-accent-ice: #1e40af;
+  --color-accent: #0066cc;
+  --color-accent-bright: #0a5fc0;
+  --color-accent-sky: #0066cc;
+  --color-accent-ice: #004e99;
 
-  --color-border: rgba(13, 27, 42, 0.10);
-  --color-border-strong: rgba(13, 27, 42, 0.20);
+  --color-border: #e6ecf3;
+  --color-border-strong: #cdd8e4;
 
   --color-card-bg: #ffffff;
-  --color-header-bg: rgba(255, 255, 255, 0.85);
-  --hero-gradient: linear-gradient(180deg, #f7fafd 0%, #eef3f8 100%);
-  --shadow-card-hover: 0 12px 28px -12px rgba(13, 27, 42, 0.22);
-  --shadow-btn-solid: 0 6px 16px -6px rgba(29, 78, 216, 0.5);
-  --shadow-btn-solid-hover: 0 10px 22px -8px rgba(29, 78, 216, 0.6);
+  --color-header-bg: rgba(255, 255, 255, 0.8);
+  --hero-gradient: linear-gradient(180deg, #ffffff, #eef3f9);
+  --shadow-card-hover: 0 22px 45px -22px rgba(7, 34, 58, 0.30);
+  --shadow-btn-solid: 0 10px 24px -10px rgba(0, 102, 204, 0.55);
+  --shadow-btn-solid-hover: 0 14px 30px -10px rgba(0, 102, 204, 0.65);
 
-  --font-display: "Inter", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
 }
-html[data-theme="corporate"] body::before {
-  background: linear-gradient(180deg, #ffffff 0%, #f5f8fb 100%);
-  animation: none;
+@keyframes corp-drift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes corp-shimmer {
+  0%   { box-shadow: 0 0 0 2px #0066cc, 0 28px 55px -22px rgba(7, 34, 58, 0.40); }
+  50%  { box-shadow: 0 0 0 2px #7b5cff, 0 28px 55px -22px rgba(7, 34, 58, 0.40); }
+  100% { box-shadow: 0 0 0 2px #00b3a4, 0 28px 55px -22px rgba(7, 34, 58, 0.40); }
 }
+html[data-theme="corporate"] body::before { background: linear-gradient(180deg, #ffffff, #f4f7fb); animation: none; }
+/* signature: slow pastel aurora drifting behind the hero */
+html[data-theme="corporate"] .hero {
+  background: linear-gradient(115deg, #ffffff 0%, #e9f1fd 28%, #efe9fd 52%, #e6f8f3 78%, #ffffff 100%);
+  background-size: 220% 220%;
+  animation: corp-drift 20s ease-in-out infinite;
+}
+html[data-theme="corporate"] .hud-corner,
+html[data-theme="corporate"] .hero-grid,
+html[data-theme="corporate"] .hero-scan { display: none; }
+/* editorial serif headlines: soft-navy, tight tracking */
 html[data-theme="corporate"] .frost-text {
   background: none;
   -webkit-background-clip: border-box;
@@ -215,45 +228,65 @@ html[data-theme="corporate"] .frost-text {
   color: var(--color-fg);
   -webkit-text-fill-color: var(--color-fg);
   filter: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 html[data-theme="corporate"] .hero-name { animation: hud-rise 0.7s ease 0.3s forwards; }
+html[data-theme="corporate"] .brand { font-family: var(--font-sans); letter-spacing: 0.01em; font-weight: 700; }
+html[data-theme="corporate"] .mono-eyebrow {
+  font-family: var(--font-sans);
+  color: var(--color-accent);
+  letter-spacing: 0.2em;
+}
+/* premium pill buttons with soft shadow */
 html[data-theme="corporate"] .hud-btn {
   font-family: var(--font-sans);
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   text-transform: none;
-  border-radius: 6px;
+  border-radius: 9999px;
+  padding: 0.8rem 1.6rem;
 }
-html[data-theme="corporate"] .hud-btn-solid { color: #ffffff; }
+html[data-theme="corporate"] .hud-btn-solid { background: var(--color-accent); color: #ffffff; }
+html[data-theme="corporate"] .hud-btn-solid:hover { background: var(--color-accent-bright); transform: translateY(-1px); }
+html[data-theme="corporate"] .hud-btn-ghost { background: #ffffff; border: 1px solid var(--color-border-strong); color: var(--color-fg); }
+html[data-theme="corporate"] .hud-btn-ghost:hover { border-color: var(--color-accent); color: var(--color-accent); background: #f5f9ff; }
+/* refined pill chips */
 html[data-theme="corporate"] .hud-chip {
+  font-family: var(--font-sans);
   color: var(--color-accent-ice);
   background: var(--color-bg-raised);
-  border-color: var(--color-border-strong);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
   text-transform: none;
   letter-spacing: 0.01em;
 }
-html[data-theme="corporate"] .mono-eyebrow { color: var(--color-accent); }
-html[data-theme="corporate"] .hud-corner,
-html[data-theme="corporate"] .hero-grid,
-html[data-theme="corporate"] .hero-scan { display: none; }
+/* cards: white, hairline border, soft layered shadow */
+html[data-theme="corporate"] .hud-card,
+html[data-theme="corporate"] .surface-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(7, 34, 58, 0.04), 0 10px 26px -18px rgba(7, 34, 58, 0.26);
+}
 html[data-theme="corporate"] .frost-well {
   background: #ffffff;
   backdrop-filter: none;
-  border-color: var(--color-border);
-  box-shadow: 0 10px 30px -18px rgba(13, 27, 42, 0.25);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px -18px rgba(7, 34, 58, 0.22);
 }
 html[data-theme="corporate"] .frost-well::before { display: none; }
+/* signature: grayscale portrait with a slow color-shifting edge; full color on hover */
 html[data-theme="corporate"] .portrait-frame {
-  border-color: var(--color-border-strong);
+  border: 0;
+  border-radius: 14px;
   background: var(--color-bg-panel);
-  box-shadow: 0 20px 50px -20px rgba(13, 27, 42, 0.35);
+  animation: corp-shimmer 7s ease-in-out infinite;
 }
-/* clean, non-techy brand wordmark under the corporate look */
-html[data-theme="corporate"] .brand {
-  font-family: var(--font-sans);
-  letter-spacing: 0.01em;
-  font-weight: 700;
-}
+html[data-theme="corporate"] .portrait-img { filter: grayscale(1) contrast(1.05); transition: filter 0.5s ease; }
+html[data-theme="corporate"] .portrait-frame:hover .portrait-img { filter: grayscale(0) contrast(1); }
 
 /* ---------------- SCI-FI MECH: heavier robotics HUD ---------------- */
 html[data-theme="scifi"] {
