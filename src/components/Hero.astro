@@ -1,6 +1,7 @@
 ---
 import { site } from '../config/site';
 import SocialLinks from './SocialLinks.astro';
+import { withBase } from '../lib/url';
 
 const portraits = ['/pics/4tuR0oZzN2U.jpeg', '/pics/Fd7y6vLyjpU.jpeg', '/pics/DoWCwQ5SLZU.jpeg', '/pics/ijr4LBVSELs.jpeg'];
 ---
@@ -23,8 +24,8 @@ const portraits = ['/pics/4tuR0oZzN2U.jpeg', '/pics/Fd7y6vLyjpU.jpeg', '/pics/Do
         {site.tagline}
       </p>
       <div class="rise mt-8 flex flex-wrap items-center gap-3" style="animation-delay:.65s">
-        <a href="/projects" class="hud-btn hud-btn-solid">View Projects<span aria-hidden="true"> ▸</span></a>
-        <a href="/contact" class="hud-btn hud-btn-ghost">Get in Touch</a>
+        <a href={withBase('/projects')} class="hud-btn hud-btn-solid">View Projects<span aria-hidden="true"> ▸</span></a>
+        <a href={withBase('/contact')} class="hud-btn hud-btn-ghost">Get in Touch</a>
       </div>
       <div class="rise mt-8" style="animation-delay:.8s">
         <SocialLinks />
@@ -36,7 +37,7 @@ const portraits = ['/pics/4tuR0oZzN2U.jpeg', '/pics/Fd7y6vLyjpU.jpeg', '/pics/Do
         {
           portraits.map((src, i) => (
             <img
-              src={src}
+              src={withBase(src)}
               alt={i === 0 ? `Portrait of ${site.name}` : ''}
               class:list={['portrait-img', i === 0 && 'is-active']}
               decoding="async"

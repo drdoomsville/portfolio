@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { sortByOrder, padIndex } from '../../lib/projects';
+import { withBase } from '../../lib/url';
 
 const projects = sortByOrder(await getCollection('projects'));
 ---
@@ -19,7 +20,7 @@ const projects = sortByOrder(await getCollection('projects'));
         <div class="grid gap-5 sm:grid-cols-2">
           {projects.map((p) => (
             <ProjectCard
-              href={`/projects/${p.id}`}
+              href={withBase(`/projects/${p.id}`)}
               index={padIndex(p.data.order)}
               title={p.data.title}
               summary={p.data.summary}

@@ -6,6 +6,7 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://drdoomsville.github.io',
+  base: '/portfolio',
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],

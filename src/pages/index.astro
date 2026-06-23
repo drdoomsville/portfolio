@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import { site } from '../config/site';
+import { withBase } from '../lib/url';
 ---
 
 <BaseLayout>
@@ -14,7 +15,7 @@ import { site } from '../config/site';
       {
         site.nav.map((item) => (
           <a
-            href={item.href}
+            href={withBase(item.href)}
             class="surface-card reveal group rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 transition duration-200 hover:-translate-y-1 hover:border-[var(--color-accent)] hover:shadow-[var(--shadow-card-hover)]"
           >
             <div class="flex items-center justify-between">

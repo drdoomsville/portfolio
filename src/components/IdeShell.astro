@@ -5,10 +5,11 @@
 // the real site pages, so they double as navigation. Active file is resolved
 // server-side from the current route.
 import { site } from '../config/site';
+import { withBase, stripBase } from '../lib/url';
 
-const path = Astro.url.pathname;
 const norm = (p: string) => (p.length > 1 ? p.replace(/\/$/, '') : p);
-const cur = norm(path);
+// compare on root-relative paths (strip the base off the current URL first)
+const cur = norm(stripBase(Astro.url.pathname));
 
 const fileName: Record<string, string> = {
   '/about': 'about.md',
@@ -52,7 +53,7 @@ const readme = files[0];
     <div class="ide-explorer-title">Explorer</div>
     <div class="ide-folder">▾ wk-portfolio</div>
     <div class="ide-tree">
-      <a href={readme.href} class:list={[isActive(readme.href) && 'is-active']}>
+      <a href={withBase(readme.href)} class:list={[isActive(readme.href) && 'is-active']}>
         <span class="ide-dot" style={`background:${extColor[readme.ext]}`}></span>{readme.name}
       </a>
     </div>
@@ -60,7 +61,7 @@ const readme = files[0];
     <div class="ide-tree">
       {
         srcFiles.map((f) => (
-          <a href={f.href} style="padding-left:38px" class:list={[isActive(f.href) && 'is-active']}>
+          <a href={withBase(f.href)} style="padding-left:38px" class:list={[isActive(f.href) && 'is-active']}>
             <span class="ide-dot" style={`background:${extColor[f.ext]}`}></span>
             {f.name}
           </a>
@@ -73,7 +74,7 @@ const readme = files[0];
   <div class="ide-tabs" role="tablist" aria-label="Open editors">
     {
       files.map((f) => (
-        <a href={f.href} class:list={['ide-tab', isActive(f.href) && 'is-active']} aria-selected={isActive(f.href)}>
+        <a href={withBase(f.href)} class:list={['ide-tab', isActive(f.href) && 'is-active']} aria-selected={isActive(f.href)}>
           <span class="ide-dot" style={`background:${extColor[f.ext]}`} /> {f.name}
         </a>
       ))
@@ -104,7 +105,7 @@ const readme = files[0];
       <div class="ide-palette-list">
         {
           files.map((f) => (
-            <a class="ide-palette-item" href={f.href} data-name={f.name} data-href={f.href}>
+            <a class="ide-palette-item" href={withBase(f.href)} data-name={f.name} data-href={withBase(f.href)}>
               <span class="ide-dot" style={`background:${extColor[f.ext]}`} />
               {f.name}
               <span class="ide-pi-path">{f.href}</span>

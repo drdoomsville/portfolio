@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import { site } from '../config/site';
+import { withBase } from '../lib/url';
 ---
 
 <BaseLayout title="About" description="Who I am and what I do.">
@@ -10,7 +11,7 @@ import { site } from '../config/site';
     <div class="frost-well reveal max-w-2xl space-y-4 text-lg leading-relaxed text-[var(--color-body)]">
       {site.longBio.map((p) => <p>{p}</p>)}
     </div>
-    <a href="/about/the-long-game" class="hud-btn hud-btn-ghost mt-8">
+    <a href={withBase('/about/the-long-game')} class="hud-btn hud-btn-ghost mt-8">
       Read the full career story<span aria-hidden="true"> →</span>
     </a>
   </div>

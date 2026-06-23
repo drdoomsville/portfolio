@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Prose from '../../components/Prose.astro';
+import { withBase } from '../../lib/url';
 
 export const getStaticPaths = (async () => {
   const stories = await getCollection('stories');
@@ -21,9 +22,9 @@ const { Content } = await render(story);
   <article class="mx-auto max-w-3xl px-4 py-20">
     {
       project ? (
-        <a href={`/projects/${project.id}`} class="mono-eyebrow transition-colors hover:text-[var(--color-accent-bright)]">← Back to {project.data.title}</a>
+        <a href={withBase(`/projects/${project.id}`)} class="mono-eyebrow transition-colors hover:text-[var(--color-accent-bright)]">← Back to {project.data.title}</a>
       ) : (
-        <a href="/projects" class="mono-eyebrow transition-colors hover:text-[var(--color-accent-bright)]">← All Projects</a>
+        <a href={withBase('/projects')} class="mono-eyebrow transition-colors hover:text-[var(--color-accent-bright)]">← All Projects</a>
       )
     }
 
