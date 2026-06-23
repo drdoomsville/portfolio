@@ -94,6 +94,7 @@ const portraits = ['/pics/4tuR0oZzN2U.jpeg', '/pics/Fd7y6vLyjpU.jpeg', '/pics/Do
     border: 1px solid var(--color-border-strong);
     box-shadow: 0 0 40px rgba(34, 211, 238, 0.18);
     background: var(--color-bg-panel);
+    transition: box-shadow 1s ease;
   }
   .portrait-img {
     position: absolute;
@@ -103,11 +104,24 @@ const portraits = ['/pics/4tuR0oZzN2U.jpeg', '/pics/Fd7y6vLyjpU.jpeg', '/pics/Do
     object-fit: cover;
     object-position: center 28%;
     opacity: 0;
-    transition: opacity 1.2s ease;
+    transition: opacity 1.2s ease, filter 1s ease;
   }
   .portrait-img.is-active {
     opacity: 1;
   }
+
+  /* randomized photo effects (applied per-cycle by the rotator script) */
+  .portrait-img.fx-normal { filter: none; }
+  .portrait-img.fx-bw { filter: grayscale(1) contrast(1.05); }
+  .portrait-img.fx-noir { filter: grayscale(1) contrast(1.45) brightness(0.92); }
+  .portrait-img.fx-vintage { filter: sepia(0.55) contrast(1.1) saturate(1.25) brightness(0.96); }
+  .portrait-img.fx-warm { filter: sepia(0.3) saturate(1.5) brightness(1.06); }
+  .portrait-img.fx-faded { filter: contrast(0.9) brightness(1.12) saturate(0.8); }
+  /* randomized frame glows */
+  .portrait-frame.glow-blue { box-shadow: 0 0 30px rgba(97, 175, 239, 0.6); }
+  .portrait-frame.glow-green { box-shadow: 0 0 30px rgba(152, 195, 121, 0.55); }
+  .portrait-frame.glow-magenta { box-shadow: 0 0 30px rgba(198, 120, 221, 0.6); }
+  .portrait-frame.glow-cyan { box-shadow: 0 0 30px rgba(86, 182, 194, 0.6); }
 
   @media (prefers-reduced-motion: reduce) {
     .hero-name { opacity: 1 !important; }
@@ -117,14 +131,42 @@ const portraits = ['/pics/4tuR0oZzN2U.jpeg', '/pics/Fd7y6vLyjpU.jpeg', '/pics/Do
 
 <script is:inline>
   (() => {
-    const imgs = document.querySelectorAll('.portrait-img');
-    if (imgs.length < 2) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let i = 0;
+    const imgs = Array.from(document.querySelectorAll('.portrait-img'));
+    const frame = document.querySelector('.portrait-frame');
+    if (!imgs.length || !frame) return;
+
+    const FX = ['fx-normal', 'fx-bw', 'fx-noir', 'fx-vintage', 'fx-warm', 'fx-faded'];
+    const GLOWS = ['', 'glow-blue', 'glow-green', 'glow-magenta', 'glow-cyan'];
+    const pick = (a) => a[(Math.random() * a.length) | 0];
+    const shuffle = (a) => {
+      a = a.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = (Math.random() * (i + 1)) | 0;
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    const setFx = (img) => { FX.forEach((c) => img.classList.remove(c)); img.classList.add(pick(FX)); };
+    const setGlow = () => { GLOWS.forEach((g) => g && frame.classList.remove(g)); const g = pick(GLOWS); if (g) frame.classList.add(g); };
+
+    // start from whichever image is already active; give it a random look
+    let cur = Math.max(0, imgs.findIndex((im) => im.classList.contains('is-active')));
+    setFx(imgs[cur]);
+    setGlow();
+
+    if (imgs.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const others = () => shuffle(imgs.map((_, k) => k).filter((k) => k !== cur));
+    let queue = others();
+    let qi = 0;
     setInterval(() => {
-      imgs[i].classList.remove('is-active');
-      i = (i + 1) % imgs.length;
-      imgs[i].classList.add('is-active');
-    }, 4000);
+      const next = queue[qi++];
+      imgs[cur].classList.remove('is-active');
+      setFx(imgs[next]);
+      setGlow();
+      imgs[next].classList.add('is-active');
+      cur = next;
+      if (qi >= queue.length) { queue = others(); qi = 0; }
+    }, 4200);
   })();
 </script>
