@@ -1,0 +1,184 @@
+---
+// VS Code-style IDE chrome for the programmer theme: activity bar, file-tree
+// Explorer, editor tabs, status bar, and a Ctrl+K command palette. Inert/hidden
+// unless data-theme="programmer" (see global.css). The file tree + tabs map to
+// the real site pages, so they double as navigation. Active file is resolved
+// server-side from the current route.
+import { site } from '../config/site';
+
+const path = Astro.url.pathname;
+const norm = (p: string) => (p.length > 1 ? p.replace(/\/$/, '') : p);
+const cur = norm(path);
+
+const fileName: Record<string, string> = {
+  '/about': 'about.md',
+  '/career': 'career.md',
+  '/projects': 'projects.tsx',
+  '/personal': 'personal.md',
+  '/contact': 'contact.ts',
+};
+
+interface IdeFile { name: string; href: string; lang: string; ext: string; }
+
+const files: IdeFile[] = [
+  { name: 'README.md', href: '/', lang: 'Markdown', ext: 'md' },
+  ...site.nav.map((n) => {
+    const name = fileName[n.href] ?? `${n.href.replace('/', '')}.md`;
+    const ext = name.split('.').pop()!;
+    const lang = ext === 'ts' || ext === 'tsx' ? 'TypeScript' : 'Markdown';
+    return { name, href: n.href, lang, ext };
+  }),
+];
+
+const extColor: Record<string, string> = { md: '#61afef', ts: '#56b6c2', tsx: '#56b6c2' };
+const isActive = (href: string) => (href === '/' ? cur === '/' : cur === href || cur.startsWith(href + '/'));
+const active = files.find((f) => isActive(f.href)) ?? files[0];
+const srcFiles = files.filter((f) => f.href !== '/');
+const readme = files[0];
+---
+
+<div class="ide-shell">
+  <!-- activity bar -->
+  <nav class="ide-activity" aria-label="Activity Bar">
+    <span class="is-active" title="Explorer" aria-hidden="true">▤</span>
+    <span title="Search" aria-hidden="true">⌕</span>
+    <span title="Source Control" aria-hidden="true">⎇</span>
+    <span title="Run" aria-hidden="true">▷</span>
+    <span title="Settings" aria-hidden="true">⚙</span>
+  </nav>
+
+  <!-- explorer / file tree -->
+  <aside class="ide-explorer" aria-label="Explorer">
+    <div class="ide-explorer-title">Explorer</div>
+    <div class="ide-folder">▾ wk-portfolio</div>
+    <div class="ide-tree">
+      <a href={readme.href} class:list={[isActive(readme.href) && 'is-active']}>
+        <span class="ide-dot" style={`background:${extColor[readme.ext]}`}></span>{readme.name}
+      </a>
+    </div>
+    <div class="ide-folder" style="padding-left:20px">▾ src</div>
+    <div class="ide-tree">
+      {
+        srcFiles.map((f) => (
+          <a href={f.href} style="padding-left:38px" class:list={[isActive(f.href) && 'is-active']}>
+            <span class="ide-dot" style={`background:${extColor[f.ext]}`}></span>
+            {f.name}
+          </a>
+        ))
+      }
+    </div>
+  </aside>
+
+  <!-- editor tabs -->
+  <div class="ide-tabs" role="tablist" aria-label="Open editors">
+    {
+      files.map((f) => (
+        <a href={f.href} class:list={['ide-tab', isActive(f.href) && 'is-active']} aria-selected={isActive(f.href)}>
+          <span class="ide-dot" style={`background:${extColor[f.ext]}`} /> {f.name}
+        </a>
+      ))
+    }
+  </div>
+
+  <!-- status bar -->
+  <div class="ide-statusbar">
+    <span class="ide-sb-group">
+      <span>⎇ main</span>
+      <span>● 0 ⚠ 0</span>
+    </span>
+    <span class="ide-sb-group">
+      <span>Ln 1, Col 1</span>
+      <span>Spaces: 2</span>
+      <span>UTF-8</span>
+      <span>LF</span>
+      <span>{active.lang}</span>
+      <span>⌘K palette</span>
+    </span>
+  </div>
+
+  <!-- command palette -->
+  <div class="ide-palette" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="ide-palette-backdrop"></div>
+    <div class="ide-palette-box">
+      <input type="text" placeholder="Go to file…  (↑↓ to move, ↵ to open, esc to close)" aria-label="Go to file" />
+      <div class="ide-palette-list">
+        {
+          files.map((f) => (
+            <a class="ide-palette-item" href={f.href} data-name={f.name} data-href={f.href}>
+              <span class="ide-dot" style={`background:${extColor[f.ext]}`} />
+              {f.name}
+              <span class="ide-pi-path">{f.href}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const root = document.documentElement;
+    const KEY = 'ide-sidebar';
+    try { if (localStorage.getItem(KEY) === 'collapsed') root.classList.add('ide-sidebar-collapsed'); } catch {}
+    const isProg = () => root.getAttribute('data-theme') === 'programmer';
+
+    const palette = document.querySelector('.ide-palette');
+    const input = palette && palette.querySelector('input');
+    const items = palette ? Array.from(palette.querySelectorAll('.ide-palette-item')) : [];
+    let sel = 0;
+    const visible = () => items.filter((i) => !i.hidden);
+    const setSel = (n) => {
+      const vis = visible();
+      if (!vis.length) return;
+      sel = (n + vis.length) % vis.length;
+      items.forEach((i) => i.classList.remove('is-sel'));
+      vis[sel].classList.add('is-sel');
+      vis[sel].scrollIntoView({ block: 'nearest' });
+    };
+    const open = () => {
+      if (!palette) return;
+      palette.classList.add('is-open');
+      input.value = '';
+      items.forEach((i) => (i.hidden = false));
+      setSel(0);
+      input.focus();
+    };
+    const close = () => palette && palette.classList.remove('is-open');
+    const filter = () => {
+      const q = input.value.toLowerCase();
+      items.forEach((i) => (i.hidden = !i.dataset.name.toLowerCase().includes(q)));
+      setSel(0);
+    };
+
+    if (input) input.addEventListener('input', filter);
+    const backdrop = palette && palette.querySelector('.ide-palette-backdrop');
+    if (backdrop) backdrop.addEventListener('click', close);
+
+    document.addEventListener('keydown', (e) => {
+      if (!isProg()) return;
+      const k = e.key.toLowerCase();
+      if ((e.ctrlKey || e.metaKey) && (k === 'k' || k === 'p')) {
+        e.preventDefault();
+        palette && palette.classList.contains('is-open') ? close() : open();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && k === 'b') {
+        e.preventDefault();
+        root.classList.toggle('ide-sidebar-collapsed');
+        try { localStorage.setItem(KEY, root.classList.contains('ide-sidebar-collapsed') ? 'collapsed' : 'open'); } catch {}
+        return;
+      }
+      if (palette && palette.classList.contains('is-open')) {
+        if (e.key === 'Escape') close();
+        else if (e.key === 'ArrowDown') { e.preventDefault(); setSel(sel + 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); setSel(sel - 1); }
+        else if (e.key === 'Enter') {
+          e.preventDefault();
+          const vis = visible();
+          if (vis[sel]) location.href = vis[sel].dataset.href;
+        }
+      }
+    });
+  })();
+</script>

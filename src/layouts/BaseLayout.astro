@@ -5,6 +5,7 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import ThemeSwitcher from '../components/ThemeSwitcher.astro';
 import HudChrome from '../components/HudChrome.astro';
+import IdeShell from '../components/IdeShell.astro';
 
 interface Props {
   title?: string;
@@ -68,6 +69,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     </main>
     <Footer />
     <HudChrome />
+    <IdeShell />
     <ThemeSwitcher />
     <script is:inline>
       (() => {
