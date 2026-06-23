@@ -3,6 +3,7 @@ import '../styles/global.css';
 import { site } from '../config/site';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import ThemeSwitcher from '../components/ThemeSwitcher.astro';
 
 interface Props {
   title?: string;
@@ -20,6 +21,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Apply the saved theme before first paint to avoid a flash of the default.
+      (() => {
+        try {
+          const t = localStorage.getItem('site-theme');
+          document.documentElement.setAttribute(
+            'data-theme',
+            ['baseline', 'corporate', 'scifi', 'programmer'].includes(t) ? t : 'baseline'
+          );
+        } catch {
+          document.documentElement.setAttribute('data-theme', 'baseline');
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="canonical" href={canonical} />
@@ -27,7 +42,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500&family=Inter:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&display=swap"
       rel="stylesheet"
     />
     <title>{pageTitle}</title>
@@ -44,13 +59,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded focus:bg-[var(--color-accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#04121a]"
       >Skip to content</a
     >
-    <header class="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[#03070d]/80 backdrop-blur">
+    <header class="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-header-bg)] backdrop-blur">
       <Nav />
     </header>
     <main id="main" class="flex-1">
       <slot />
     </main>
     <Footer />
+    <ThemeSwitcher />
     <script is:inline>
       (() => {
         const els = document.querySelectorAll('.reveal');
