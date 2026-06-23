@@ -160,6 +160,16 @@ body::before {
   .frost-text { filter: drop-shadow(0 0 18px rgba(186, 230, 253, 0.4)); }
 }
 
+/* theme-conditional content: `.theme-default` shows for baseline + sci-fi;
+   `.theme-only-*` shows only under its named theme. Lets markup carry every
+   variant and lets the live switcher reveal the right one (CSS, no re-render). */
+.theme-only-corporate,
+.theme-only-programmer { display: none; }
+html[data-theme="corporate"] .theme-default,
+html[data-theme="programmer"] .theme-default { display: none; }
+html[data-theme="corporate"] .theme-only-corporate { display: inline; }
+html[data-theme="programmer"] .theme-only-programmer { display: inline; }
+
 /* ============================================================
    THEME VARIATIONS — selected via html[data-theme="..."]
    Baseline (default) is the :root/@theme block at the top.
@@ -237,6 +247,12 @@ html[data-theme="corporate"] .portrait-frame {
   border-color: var(--color-border-strong);
   background: var(--color-bg-panel);
   box-shadow: 0 20px 50px -20px rgba(13, 27, 42, 0.35);
+}
+/* clean, non-techy brand wordmark under the corporate look */
+html[data-theme="corporate"] .brand {
+  font-family: var(--font-sans);
+  letter-spacing: 0.01em;
+  font-weight: 700;
 }
 
 /* ---------------- SCI-FI MECH: heavier robotics HUD ---------------- */
