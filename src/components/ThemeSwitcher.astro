@@ -8,6 +8,7 @@ const themes = [
   { id: 'corporate', label: 'Corporate' },
   { id: 'scifi', label: 'Sci-Fi Mech' },
   { id: 'programmer', label: 'Programmer' },
+  { id: 'brutalist', label: 'Brutalist' },
 ];
 ---
 
@@ -79,7 +80,7 @@ const themes = [
 <script is:inline>
   (() => {
     const KEY = 'site-theme';
-    const valid = ['baseline', 'corporate', 'scifi', 'programmer'];
+    const valid = ['baseline', 'corporate', 'scifi', 'programmer', 'brutalist'];
     const root = document.documentElement;
     const btns = document.querySelectorAll('[data-theme-choice]');
 

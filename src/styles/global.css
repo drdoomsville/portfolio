@@ -583,3 +583,154 @@ html.ide-sidebar-collapsed[data-theme="programmer"] .ide-tabs { left: 44px; }
   .ide-activity, .ide-explorer { display: none; }
   .ide-tabs, html.ide-sidebar-collapsed[data-theme="programmer"] .ide-tabs { left: 0; }
 }
+
+/* ---------------- BRUTALIST: loud neo-brutalism (Gumroad / marquee) ---------------- */
+html[data-theme="brutalist"] {
+  --color-bg: #f5f1e8;
+  --color-bg-panel: #ffffff;
+  --color-bg-raised: #ebe6d8;
+
+  --color-fg: #0a0a0a;
+  --color-body: #161616;
+  --color-muted: #3a3a3a;
+
+  --color-accent: #1a1aff;        /* electric cobalt — links/markers */
+  --color-accent-bright: #4d4dff;
+  --color-accent-sky: #ff2e88;    /* hot pink */
+  --color-accent-ice: #0a0a0a;
+
+  --color-border: #000000;
+  --color-border-strong: #000000;
+
+  --color-card-bg: #ffffff;
+  --color-header-bg: #f5f1e8;
+  --hero-gradient: #f5f1e8;
+  --shadow-card-hover: 6px 6px 0 #000;
+  --shadow-btn-solid: 5px 5px 0 #000;
+  --shadow-btn-solid-hover: 2px 2px 0 #000;
+
+  --font-display: "Archivo Black", "Arial Black", system-ui, sans-serif;
+}
+html[data-theme="brutalist"] body::before { background: #f5f1e8; animation: none; }
+html[data-theme="brutalist"] header { top: 34px; border-bottom: 3px solid #000; background: #f5f1e8; }
+html[data-theme="brutalist"] body { padding-top: 34px; }
+html[data-theme="brutalist"] .hud-corner,
+html[data-theme="brutalist"] .hero-grid,
+html[data-theme="brutalist"] .hero-scan { display: none; }
+/* oversized all-caps black display type */
+html[data-theme="brutalist"] .frost-text {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: #0a0a0a;
+  -webkit-text-fill-color: #0a0a0a;
+  filter: none;
+  font-family: var(--font-display);
+  font-weight: 400;          /* Archivo Black ships a single heavy weight */
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 0.95;
+}
+html[data-theme="brutalist"] .hero-name {
+  font-size: clamp(3rem, 11vw, 7.5rem);
+  line-height: 0.88;
+  text-shadow: 5px 5px 0 var(--color-accent-sky);
+  animation: hud-rise 0.6s ease 0.2s forwards;
+}
+html[data-theme="brutalist"] .brand { font-family: var(--font-display); font-weight: 400; color: #0a0a0a; }
+/* eyebrow becomes a black sticker label */
+html[data-theme="brutalist"] .mono-eyebrow {
+  display: inline-block;
+  background: #0a0a0a;
+  color: #fff;
+  padding: 3px 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+/* chunky bordered buttons with hard offset shadow + press-on-hover */
+html[data-theme="brutalist"] .hud-btn {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border: 3px solid #000;
+  border-radius: 0;
+  box-shadow: 5px 5px 0 #000;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.08s ease;
+}
+html[data-theme="brutalist"] .hud-btn-solid { background: #ffe600; color: #000; }
+html[data-theme="brutalist"] .hud-btn-solid:hover { background: #ffe600; transform: translate(3px, 3px); box-shadow: 2px 2px 0 #000; }
+html[data-theme="brutalist"] .hud-btn-ghost { background: #fff; color: #000; }
+html[data-theme="brutalist"] .hud-btn-ghost:hover { background: var(--color-accent-sky); color: #000; transform: translate(3px, 3px); box-shadow: 2px 2px 0 #000; }
+/* sticker chips */
+html[data-theme="brutalist"] .hud-chip {
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 0;
+  box-shadow: 3px 3px 0 #000;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+/* cards: thick black border, hard offset shadow, press-on-hover, clashing fills */
+html[data-theme="brutalist"] .hud-card,
+html[data-theme="brutalist"] .surface-card {
+  border: 3px solid #000;
+  border-radius: 0;
+  box-shadow: 6px 6px 0 #000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+html[data-theme="brutalist"] .hud-card:hover,
+html[data-theme="brutalist"] .surface-card:hover {
+  transform: translate(3px, 3px);
+  box-shadow: 3px 3px 0 #000;
+  border-color: #000;
+}
+html[data-theme="brutalist"] .hud-card:nth-child(5n + 1),
+html[data-theme="brutalist"] .surface-card:nth-child(5n + 1) { background: #ffe600; }
+html[data-theme="brutalist"] .hud-card:nth-child(5n + 2),
+html[data-theme="brutalist"] .surface-card:nth-child(5n + 2) { background: #ffadd6; }
+html[data-theme="brutalist"] .hud-card:nth-child(5n + 3),
+html[data-theme="brutalist"] .surface-card:nth-child(5n + 3) { background: #b9f6ff; }
+html[data-theme="brutalist"] .hud-card:nth-child(5n + 4),
+html[data-theme="brutalist"] .surface-card:nth-child(5n + 4) { background: #d9c4ff; }
+html[data-theme="brutalist"] .hud-card:nth-child(5n + 5),
+html[data-theme="brutalist"] .surface-card:nth-child(5n + 5) { background: #c8f55f; }
+html[data-theme="brutalist"] .frost-well {
+  background: #fff;
+  backdrop-filter: none;
+  border: 3px solid #000;
+  border-radius: 0;
+  box-shadow: 8px 8px 0 #000;
+}
+html[data-theme="brutalist"] .frost-well::before { display: none; }
+html[data-theme="brutalist"] .portrait-frame {
+  background: #fff;
+  border: 4px solid #000;
+  border-radius: 0;
+  box-shadow: 12px 12px 0 #000;
+  transform: rotate(-2deg);
+}
+
+/* looping marquee banner (brutalist only) */
+.brutal-marquee { display: none; }
+html[data-theme="brutalist"] .brutal-marquee {
+  display: block;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 34px;
+  z-index: 85;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+.brutal-marquee-track { display: inline-flex; white-space: nowrap; will-change: transform; animation: brutal-scroll 22s linear infinite; }
+.brutal-marquee-track span {
+  font-family: var(--font-display), "Arial Black", sans-serif;
+  font-size: 0.8rem;
+  line-height: 34px;
+  letter-spacing: 0.04em;
+  color: #ffe600;
+  padding-right: 1.6rem;
+}
+@keyframes brutal-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
