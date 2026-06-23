@@ -1,0 +1,111 @@
+---
+// Persistent sci-fi HUD chrome + boot sequence + decode-text headers.
+// All markup is inert/hidden unless data-theme="scifi" (see global.css). The
+// script activates the boot animation and header decode whenever the sci-fi
+// theme becomes active (on load or via the live switcher), and keeps the
+// status-bar clock ticking.
+---
+
+<div class="hud-chrome" aria-hidden="true">
+  <div class="hud-statusbar">
+    <span class="hud-sb-left">SYS://WK_CORE <b class="hud-dot"></b> ONLINE</span>
+    <span class="hud-sb-mid">LAT 35.2271°N · LON 80.8431°W · CHARLOTTE</span>
+    <span class="hud-sb-right"><span data-hud-clock>--:--:--</span> UTC</span>
+  </div>
+  <span class="hud-vcorner tl"></span>
+  <span class="hud-vcorner tr"></span>
+  <span class="hud-vcorner bl"></span>
+  <span class="hud-vcorner br"></span>
+</div>
+
+<div class="hud-boot" aria-hidden="true"><pre data-hud-bootlog></pre></div>
+
+<script is:inline>
+  (() => {
+    const root = document.documentElement;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // --- live status-bar clock (UTC) ---
+    const clockEl = document.querySelector('[data-hud-clock]');
+    const tick = () => {
+      if (!clockEl) return;
+      const d = new Date();
+      const p = (n) => String(n).padStart(2, '0');
+      clockEl.textContent = `${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}`;
+    };
+    tick();
+    setInterval(tick, 1000);
+
+    // --- decode / scramble text reveal on headings ---
+    const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/<>*[]';
+    let decodeToken = 0;
+    const decodeEl = (el, run) => {
+      const text = el.dataset.decodeText || el.textContent;
+      el.dataset.decodeText = text;
+      let i = 0;
+      const id = setInterval(() => {
+        if (run !== decodeToken) { clearInterval(id); el.textContent = text; return; }
+        i++;
+        el.textContent = text
+          .split('')
+          .map((c, idx) => (idx < i || c === ' ' ? c : GLYPHS[(Math.random() * GLYPHS.length) | 0]))
+          .join('');
+        if (i >= text.length) { clearInterval(id); el.textContent = text; }
+      }, 26);
+    };
+    const decodeHeadings = () => {
+      if (reduce) return;
+      const run = ++decodeToken;
+      const els = document.querySelectorAll('.frost-text');
+      els.forEach((el, n) => setTimeout(() => decodeEl(el, run), Math.min(n, 8) * 70));
+    };
+
+    // --- boot sequence overlay ---
+    const boot = document.querySelector('.hud-boot');
+    const log = document.querySelector('[data-hud-bootlog]');
+    const LINES = [
+      '> INITIALIZING DISPLAY ........... OK',
+      '> LOADING PROFILE: WILLIAM_KOCAK',
+      '> MOUNTING /about /career /projects',
+      '> CALIBRATING HUD OVERLAY ........ OK',
+      '> AUTH //////////////////////// OK',
+      '> SYSTEM READY',
+    ];
+    let bootToken = 0;
+    const runBoot = () => {
+      if (!boot || !log) return;
+      const run = ++bootToken;
+      if (reduce) return; // skip the animation for reduced-motion users
+      boot.classList.remove('is-fading');
+      boot.classList.add('is-on');
+      log.textContent = '';
+      let li = 0;
+      const next = () => {
+        if (run !== bootToken) return;
+        if (li < LINES.length) {
+          log.textContent += (li ? '\n' : '') + LINES[li++];
+          setTimeout(next, 150);
+        } else {
+          setTimeout(() => {
+            if (run !== bootToken) return;
+            boot.classList.add('is-fading');
+            setTimeout(() => {
+              if (run !== bootToken) return;
+              boot.classList.remove('is-on', 'is-fading');
+            }, 450);
+          }, 350);
+        }
+      };
+      next();
+    };
+
+    // --- activation: run when sci-fi becomes the active theme ---
+    const onActivate = () => { runBoot(); decodeHeadings(); };
+    if (root.getAttribute('data-theme') === 'scifi') onActivate();
+    new MutationObserver((muts) => {
+      for (const m of muts) {
+        if (m.attributeName === 'data-theme' && root.getAttribute('data-theme') === 'scifi') onActivate();
+      }
+    }).observe(root, { attributes: true });
+  })();
+</script>

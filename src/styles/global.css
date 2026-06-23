@@ -288,9 +288,9 @@ html[data-theme="corporate"] .portrait-frame {
 html[data-theme="corporate"] .portrait-img { filter: grayscale(1) contrast(1.05); transition: filter 0.5s ease; }
 html[data-theme="corporate"] .portrait-frame:hover .portrait-img { filter: grayscale(0) contrast(1); }
 
-/* ---------------- SCI-FI MECH: heavier robotics HUD ---------------- */
+/* ---------------- SCI-FI / HUD: machine interface (Territory / Cyberpunk FUI) ---------------- */
 html[data-theme="scifi"] {
-  --color-bg: #04060a;
+  --color-bg: #05080d;
   --color-bg-panel: #080d14;
   --color-bg-raised: #0a1119;
 
@@ -298,9 +298,9 @@ html[data-theme="scifi"] {
   --color-body: #bcd2dd;
   --color-muted: #6f8a99;
 
-  --color-accent: #19e6c8;
+  --color-accent: #19e6c8;        /* structural teal */
   --color-accent-bright: #5cffe4;
-  --color-accent-sky: #ff9d2f;
+  --color-accent-sky: #ff9d2f;    /* hazard amber — reserved for status/CTA */
   --color-accent-ice: #9bfff0;
 
   --color-border: rgba(25, 230, 200, 0.22);
@@ -308,7 +308,7 @@ html[data-theme="scifi"] {
 
   --color-card-bg: rgba(8, 13, 20, 0.72);
   --color-header-bg: rgba(4, 6, 10, 0.85);
-  --hero-gradient: radial-gradient(120% 90% at 80% 0%, #0a2f33 0%, #07131a 50%, #04060a 100%);
+  --hero-gradient: radial-gradient(120% 90% at 80% 0%, #0a2f33 0%, #07131a 50%, #05080d 100%);
   --shadow-card-hover: 0 0 30px rgba(25, 230, 200, 0.30);
   --shadow-btn-solid: 0 0 22px rgba(25, 230, 200, 0.6);
   --shadow-btn-solid-hover: 0 0 34px rgba(255, 157, 47, 0.55);
@@ -320,8 +320,9 @@ html[data-theme="scifi"] body::before {
     repeating-linear-gradient(0deg, transparent 0 22px, rgba(25, 230, 200, 0.05) 22px 23px),
     repeating-linear-gradient(90deg, transparent 0 22px, rgba(25, 230, 200, 0.05) 22px 23px),
     repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.28) 3px 4px),
-    radial-gradient(130% 100% at 80% -10%, #0a2f33 0%, #07131a 55%, #04060a 100%);
+    radial-gradient(130% 100% at 80% -10%, #0a2f33 0%, #07131a 55%, #05080d 100%);
 }
+/* chamfered panels */
 html[data-theme="scifi"] .hud-btn {
   clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
   border-radius: 0;
@@ -332,12 +333,120 @@ html[data-theme="scifi"] .hud-chip {
   clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
   border-radius: 0;
 }
-html[data-theme="scifi"] .hud-card { border-color: var(--color-border-strong); }
 html[data-theme="scifi"] .hud-corner { border-color: var(--color-accent-sky); width: 18px; height: 18px; }
 html[data-theme="scifi"] .mono-eyebrow { color: var(--color-accent-sky); }
 html[data-theme="scifi"] .frost-text {
-  filter: drop-shadow(0 0 18px rgba(25, 230, 200, 0.6)) drop-shadow(0 0 42px rgba(255, 157, 47, 0.28));
+  filter: drop-shadow(0 0 16px rgba(25, 230, 200, 0.55)) drop-shadow(0 0 40px rgba(255, 157, 47, 0.22));
 }
+/* glitch / chromatic-aberration flicker on the hero name when hovered */
+html[data-theme="scifi"] .hero-name:hover { animation: hud-glitch 0.45s steps(2, end) 2; }
+@keyframes hud-glitch {
+  0%   { text-shadow: 2px 0 var(--color-accent), -2px 0 #ff2e5e; }
+  50%  { text-shadow: -2px 0 var(--color-accent), 2px 0 #ff2e5e; }
+  100% { text-shadow: none; }
+}
+/* LOCK-ON targeting: cards become scannable targets */
+html[data-theme="scifi"] .hud-card,
+html[data-theme="scifi"] .surface-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  border: 1px solid var(--color-border-strong);
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+}
+html[data-theme="scifi"] .hud-card:hover,
+html[data-theme="scifi"] .surface-card:hover { border-color: var(--color-accent); }
+html[data-theme="scifi"] .hud-card::before,
+html[data-theme="scifi"] .surface-card::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+html[data-theme="scifi"] .hud-card::after,
+html[data-theme="scifi"] .surface-card::after {
+  content: "\25E3 LOCK-ON";
+  position: absolute;
+  top: 8px; right: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.22em;
+  color: var(--color-accent-sky);
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+html[data-theme="scifi"] .hud-card:hover::before,
+html[data-theme="scifi"] .surface-card:hover::before { opacity: 1; animation: hud-cardscan 1.1s linear infinite; }
+html[data-theme="scifi"] .hud-card:hover::after,
+html[data-theme="scifi"] .surface-card:hover::after { opacity: 1; transform: none; }
+@keyframes hud-cardscan { from { top: 0; } to { top: 100%; } }
+
+/* ---- persistent HUD chrome (status bar + corner brackets) + boot overlay ----
+   Hidden everywhere except under the sci-fi theme. */
+.hud-chrome, .hud-boot { display: none; }
+html[data-theme="scifi"] .hud-chrome { display: block; }
+html[data-theme="scifi"] body { padding-top: 28px; }
+html[data-theme="scifi"] header { top: 28px; }
+.hud-statusbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 28px;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent-ice);
+  background: rgba(4, 8, 13, 0.92);
+  border-bottom: 1px solid var(--color-border-strong);
+}
+.hud-sb-mid { color: var(--color-muted); }
+@media (max-width: 680px) { .hud-sb-mid { display: none; } }
+.hud-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent-sky);
+  box-shadow: 0 0 8px var(--color-accent-sky);
+  animation: hud-pulse 1.6s ease-in-out infinite;
+  vertical-align: middle;
+}
+.hud-vcorner { position: fixed; width: 18px; height: 18px; border: 0 solid var(--color-accent); z-index: 80; pointer-events: none; }
+.hud-vcorner.tl { top: 34px; left: 8px; border-left-width: 2px; border-top-width: 2px; }
+.hud-vcorner.tr { top: 34px; right: 8px; border-right-width: 2px; border-top-width: 2px; }
+.hud-vcorner.bl { bottom: 8px; left: 8px; border-left-width: 2px; border-bottom-width: 2px; }
+.hud-vcorner.br { bottom: 8px; right: 8px; border-right-width: 2px; border-bottom-width: 2px; }
+.hud-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #05080d;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 16vh 8vw;
+}
+.hud-boot.is-on { display: flex; }
+.hud-boot.is-fading { animation: hud-bootout 0.45s ease forwards; }
+.hud-boot pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.75;
+  color: var(--color-accent);
+  white-space: pre-wrap;
+  text-shadow: 0 0 8px rgba(25, 230, 200, 0.5);
+}
+@keyframes hud-bootout { to { opacity: 0; visibility: hidden; } }
 
 /* ---------------- PROGRAMMER / NERD: code-editor terminal ---------------- */
 html[data-theme="programmer"] {
