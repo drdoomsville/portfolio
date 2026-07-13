@@ -45,11 +45,32 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded focus:bg-[var(--color-accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#04121a]"
       >Skip to content</a
     >
+    <p class="wip-float" aria-hidden="true">Web Site Is Work In Progress</p>
     <main id="main" class="flex-1">
       <slot />
     </main>
     <Footer />
     <IdeShell />
+    <style is:global>
+      .wip-float {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        pointer-events: none;
+        font-family: var(--font-mono);
+        font-size: clamp(1rem, 3.2vw, 1.75rem);
+        font-weight: 500;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        text-align: center;
+        color: rgba(34, 211, 238, 0.28);
+        text-shadow: 0 0 24px rgba(34, 211, 238, 0.2);
+        user-select: none;
+      }
+    </style>
     <script is:inline>
       (() => {
         const els = document.querySelectorAll('.reveal');
